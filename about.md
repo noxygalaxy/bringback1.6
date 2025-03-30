@@ -4,26 +4,12 @@ Welcome to **BringBack1.6**, a Geometry Dash mod that brings back the nostalgic 
 
 Built with <3. Laugh at my "shit code" if you want to! :p
 
+
 ## Features
 
 - **Toggleable Old Style UI**: Switch between modern and retro layouts in real-time with a single button.
 - **All Layers**: Adjusts positions, scales, and visibility of elements to mimic older GD versions.
 - **Custom Settings**: Option to hide custom songs in `LevelInfoLayer`.
-
-## Installation
-
-1. **Prerequisites**:
-   - Install the [Geode SDK](https://geode-sdk.org/) for Geometry Dash.
-
-2. **Download**:
-   - Grab the latest release from the [Releases page](https://github.com/noxygalaxy/bringback1.6/). ["Direct Download"](https://github.com/noxygalaxy/bringback1.6/releases/latest/download)
-
-3. **Install**:
-   - Place the `.geode` file in your Geometry Dash `mods` folder.
-   - Launch Geometry Dash and enable the mod via the Geode mod menu.
-
-4. **Configure**:
-   - Open the mod settings in-game to toggle features like `change-levelinfolayer`, `change-creatorlayer`, `change-editorpauselayer`, and `hide-custom-songs`.
 
 
 ## Usage
@@ -36,23 +22,21 @@ Built with <3. Laugh at my "shit code" if you want to! :p
 
 ### LevelInfoLayer
 - **2.2 Style**  
-  ![LevelInfoLayer Modern](images/levelinfolayer_modern.png)
+  ![LevelInfoLayer Modern](https://raw.githubusercontent.com/noxygalaxy/bringback1.6/refs/heads/main/images/levelinfolayer_modern.png)
 - **1.6 Style**  
-  ![LevelInfoLayer Old](images/levelinfolayer_old.png)
+  ![LevelInfoLayer Old](https://raw.githubusercontent.com/noxygalaxy/bringback1.6/refs/heads/main/images/levelinfolayer_old.png)
 
 ### CreatorLayer
 - **2.2 Style**  
-  ![CreatorLayer Modern](images/creatorlayer_modern.png)
+  ![CreatorLayer Modern](https://raw.githubusercontent.com/noxygalaxy/bringback1.6/refs/heads/main/images/creatorlayer_modern.png)
 - **1.6 Style**  
-  ![CreatorLayer Old](images/creatorlayer_old.png)
+  ![CreatorLayer Old](https://raw.githubusercontent.com/noxygalaxy/bringback1.6/refs/heads/main/images/creatorlayer_old.png)
 
 ### EditorPauseLayer
 - **2.2 Style**  
-  ![EditorPauseLayer Modern](images/editorpauselayer_modern.png)
+  ![EditorPauseLayer Modern](https://raw.githubusercontent.com/noxygalaxy/bringback1.6/refs/heads/main/images/editorpauselayer_modern.png)
 - **1.6 Style**  
-  ![EditorPauseLayer Old](images/editorpauselayer_old.png)
-
----
+  ![EditorPauseLayer Old](https://raw.githubusercontent.com/noxygalaxy/bringback1.6/refs/heads/main/images/editorpauselayer_old.png)
 
 ## Settings
 
@@ -62,18 +46,17 @@ Customize the mod via the Geode settings menu:
 - `Modify Editor Pause Layer`: Enable/disable changes to `EditorPauseLayer`.
 - `Hide Song Widget`: Hide the custom songs widget in `LevelInfoLayer` when in old style.
 
----
-
 ## Development
 
 The mod hooks into `LevelInfoLayer`, `CreatorLayer`, and `EditorPauseLayer` to:
 - Store original UI states.
-- Apply custom positions/scales/visibility for "old style."
-- Restore defaults when toggled off.
+- Apply custom positions/scales/visibility to mimic 1.6 style.
+- Restore default 2.2 style when toggled off.
 
 Check out the source code to see bad code but functional! :P Contributions welcome.
 
----
+## Support  
+If you encounter any issues, please report them on the [Issues](https://github.com/noxygalaxy/bringback1.6/issues) page. You can also join our [**Discord**](https://discord.gg/yvvJW2z9zB) for help, discussions and to see my new mod releases <3  
 
 ## Credits
 
