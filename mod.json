@@ -1,24 +1,25 @@
 {
 	"geode": "4.2.0",
 	"gd": {
-		"win": "2.2074",
-		"android": "2.2074"
+	    "win": "2.2074",
+	    "android": "2.2074"
 	},
 	"id": "noxygalaxy.bring_back_16",
 	"name": "Bring Back 1.6!",
 	"version": "v1.4.2",
+	"tags": ["customization", "interface", "enhancement"],
 	"developer": "noxygalaxy",
-    "resources": {
-        "files": [
-            "resources/*.png"
-        ]
-    },
+        "resources": {
+            "files": [
+               "resources/*.png"
+            ]
+        },
 	"description": "Brings back menus from 1.6 (you can still access new features)",
 	"dependencies": {
-		"geode.node-ids": {
-			"version": ">=v1.20.0",
-			"importance": "required"
-		}
+	    "geode.node-ids": {
+		"version": ">=v1.20.0",
+		"importance": "required"
+	    }
 	},
 	"settings": {
         "change-levelinfolayer": {
@@ -27,19 +28,19 @@
             "type": "bool",
             "default": true
         },
-		"hide-custom-songs": {
+	"hide-custom-songs": {
             "name": "Hide Song Widget",
             "description": "Enable to hide song widget",
             "type": "bool",
             "default": false
-		},
-		"change-editorpauselayer": {
+	},
+	"change-editorpauselayer": {
             "name": "Modify Editor Pause Layer",
             "description": "Enable to modify the editor pause layer and add a toggle button",
             "type": "bool",
             "default": true
         },
-		"change-creatorlayer": {
+	"change-creatorlayer": {
             "name": "Modify Creator Layer",
             "description": "Enable to modify the creator layer and add a toggle button",
             "type": "bool",
