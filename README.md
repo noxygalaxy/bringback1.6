@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/github/created-at/noxygalaxy/bringback1.6?style=for-the-badge"></img>  
 </div>
 
-**Bring Back 1.6!** - is a Geometry Dash mod that brings back the nostalgic look and feel of older versions (like 1.6 and 2.2) to specific UI layers! This mod modifies the `LevelInfoLayer`, `CreatorLayer`, and `EditorPauseLayer` with toggleable "old style" layouts, complete with a handy button to switch between styles on the fly.
+**Bring Back 1.6!** - is a Geometry Dash mod that brings back the nostalgic look and feel of older versions (1.6) to specific UI layers! This mod modifies the `LevelInfoLayer`, `CreatorLayer`, and `EditorPauseLayer` with toggleable "old style" layouts, complete with a handy button to switch between styles on the fly.
 
 Built with <3. Laugh at my "shit code" if you want to! :p
 
