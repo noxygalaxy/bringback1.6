@@ -28,6 +28,26 @@ struct OriginalState {
     }
 };
 
+std::string getButtonSpriteName(bool isOldStyle, int quality) {
+    std::string base = isOldStyle ? "bringback22-btn" : "bringback16-btn";
+    std::string suffix;
+    switch (quality) {
+        case 2: // High quality
+            suffix = "-uhd";
+            break;
+        case 1: // Medium quality
+            suffix = "-hd";
+            break;
+        case 0: // Low quality
+        default:
+            suffix = "";
+            break;
+    }
+    std::string spriteName = "noxygalaxy.bring_back_16/" + base + suffix + ".png";
+    log::info("Attempting to load sprite: {}", spriteName);
+    return spriteName;
+}
+
 // LevelInfoLayer modification
 class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
     struct Fields {
@@ -119,8 +139,20 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
 
     void updateButtonSprite() {
         if (m_fields->toggleButton) {
-            auto newSprite = CCSprite::create(m_fields->isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr);
-            if (newSprite) m_fields->toggleButton->setNormalImage(newSprite);
+            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
+                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
+            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
+            auto newSprite = CCSprite::create(spriteName.c_str());
+            if (!newSprite) {
+                log::error("Failed to load sprite: {}", spriteName);
+                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
+                newSprite = CCSprite::create(spriteName.c_str());
+            }
+            if (newSprite) {
+                m_fields->toggleButton->setNormalImage(newSprite);
+            } else {
+                log::error("Failed to load fallback sprite: {}", spriteName);
+            }
         }
     }
 
@@ -151,13 +183,23 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
 
             m_fields->toggleMenu = CCMenu::create();
             m_fields->toggleMenu->setID("bringback1.6-menu");
-            auto buttonSprite = CCSprite::create(m_fields->isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr);
+            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
+                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
+            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
+            auto buttonSprite = CCSprite::create(spriteName.c_str());
+            if (!buttonSprite) {
+                log::error("Failed to load initial sprite: {}", spriteName);
+                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
+                buttonSprite = CCSprite::create(spriteName.c_str());
+            }
             if (buttonSprite) {
                 m_fields->toggleButton = CCMenuItemSpriteExtra::create(buttonSprite, this, menu_selector(OldStyleLevelInfoLayer::onToggle));
                 m_fields->toggleButton->setID("bringback-btn");
                 m_fields->toggleMenu->addChild(m_fields->toggleButton);
                 m_fields->toggleMenu->setPosition(422.0, 295.0);
                 addChild(m_fields->toggleMenu);
+            } else {
+                log::error("Failed to create toggle button with sprite: {}", spriteName);
             }
         } else {
             restoreOriginalStyle();
@@ -229,7 +271,15 @@ class $modify(OldStyleCreatorLayer, CreatorLayer) {
 
     void updateButtonSprite() {
         if (m_fields->toggleButton) {
-            auto newSprite = CCSprite::create(m_fields->isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr);
+            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
+                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
+            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
+            auto newSprite = CCSprite::create(spriteName.c_str());
+            if (!newSprite) {
+                log::error("Failed to load sprite: {}", spriteName);
+                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
+                newSprite = CCSprite::create(spriteName.c_str());
+            }
             if (newSprite) m_fields->toggleButton->setNormalImage(newSprite);
         }
     }
@@ -249,7 +299,15 @@ class $modify(OldStyleCreatorLayer, CreatorLayer) {
             m_fields->isOldStyle = Mod::get()->getSavedValue<bool>("old_style_in_creatorlayer", false);
             m_fields->toggleMenu = CCMenu::create();
             m_fields->toggleMenu->setID("bringback1.6-menu");
-            auto buttonSprite = CCSprite::create(m_fields->isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr);
+            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
+                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
+            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
+            auto buttonSprite = CCSprite::create(spriteName.c_str());
+            if (!buttonSprite) {
+                log::error("Failed to load initial sprite: {}", spriteName);
+                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
+                buttonSprite = CCSprite::create(spriteName.c_str());
+            }
             if (buttonSprite) {
                 m_fields->toggleButton = CCMenuItemSpriteExtra::create(buttonSprite, this, menu_selector(OldStyleCreatorLayer::onToggle));
                 m_fields->toggleButton->setID("bringback-btn");
@@ -288,7 +346,15 @@ class $modify(OldStyleEditorPauseLayer, EditorPauseLayer) {
             m_fields->isOldStyle = Mod::get()->getSavedValue<bool>("old_style_in_editorpause", false);
             m_fields->toggleMenu = CCMenu::create();
             m_fields->toggleMenu->setID("bringback1.6-menu");
-            auto buttonSprite = CCSprite::create(m_fields->isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr);
+            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
+                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
+            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
+            auto buttonSprite = CCSprite::create(spriteName.c_str());
+            if (!buttonSprite) {
+                log::error("Failed to load initial sprite: {}", spriteName);
+                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
+                buttonSprite = CCSprite::create(spriteName.c_str());
+            }
             if (buttonSprite) {
                 m_fields->toggleButton = CCMenuItemSpriteExtra::create(buttonSprite, this, menu_selector(OldStyleEditorPauseLayer::onToggle));
                 m_fields->toggleButton->setID("bringback-btn");
@@ -342,7 +408,16 @@ class $modify(OldStyleEditorPauseLayer, EditorPauseLayer) {
 
     void updateButtonSprite() {
         if (m_fields->toggleButton) {
-            auto newSprite = CCSprite::create(m_fields->isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr);
+            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
+                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
+            log::info("Quality level detected: {}", quality);
+            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
+            auto newSprite = CCSprite::create(spriteName.c_str());
+            if (!newSprite) {
+                log::error("Failed to load sprite: {}", spriteName);
+                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
+                newSprite = CCSprite::create(spriteName.c_str());
+            }
             if (newSprite) m_fields->toggleButton->setNormalImage(newSprite);
         }
     }
