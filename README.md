@@ -1,16 +1,16 @@
-<div align="center">
-  <div>
-    <img src="logo.png" width="150" alt="Bring Back 1.6! Logo"/>  
-  </div>
-  <h1>Bring Back 1.6!</h1>
-  <img src="https://img.shields.io/github/downloads/noxygalaxy/bringback1.6/total?style=for-the-badge"></img>  
-  <a href="https://discord.gg/yvvJW2z9zB"><img src="https://dcbadge.limes.pink/api/server/yvvJW2z9zB"></img></a>  
-  <img src="https://img.shields.io/github/created-at/noxygalaxy/bringback1.6?style=for-the-badge"></img>  
-</div>
+# BringBack1.6 Mod
 
-**Bring Back 1.6!** - is a Geometry Dash mod that brings back the nostalgic look and feel of older versions (1.6) to specific UI layers! This mod modifies the `LevelInfoLayer`, `CreatorLayer`, and `EditorPauseLayer` with toggleable "old style" layouts, complete with a handy button to switch between styles on the fly.
+Welcome to **BringBack1.6**, a Geometry Dash mod that brings back the nostalgic look and feel of older versions (like 1.6 and 2.2) to specific UI layers! This mod modifies the `LevelInfoLayer`, `CreatorLayer`, and `EditorPauseLayer` with toggleable "old style" layouts, complete with a handy button to switch between styles on the fly.
 
 Built with <3. Laugh at my "shit code" if you want to! :p
+
+## Compatibility
+
+This mod is Compatible with next mods:
+
+- More Difficulties by Uproxide
+
+*This list will be changed when i will update this mod :3*
 
 ## Features
 

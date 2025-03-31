@@ -4,6 +4,13 @@ Welcome to **BringBack1.6**, a Geometry Dash mod that brings back the nostalgic 
 
 Built with <3. Laugh at my "shit code" if you want to! :p
 
+## Compatibility
+
+This mod is Compatible with next mods:
+
+- More Difficulties by Uproxide
+
+*This list will be changed when i will update this mod :3*
 
 ## Features
 

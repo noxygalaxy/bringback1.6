@@ -5,7 +5,6 @@
 
 using namespace geode::prelude;
 
-// This is my shit code :p laugh at it <3
 struct OriginalState {
     CCPoint position;
     CCPoint scale;
@@ -28,32 +27,47 @@ struct OriginalState {
     }
 };
 
-std::string getButtonSpriteName(bool isOldStyle, int quality) {
-    std::string base = isOldStyle ? "bringback22-btn" : "bringback16-btn";
-    std::string suffix;
-    switch (quality) {
-        case 2: // High quality
-            suffix = "-uhd";
-            break;
-        case 1: // Medium quality
-            suffix = "-hd";
-            break;
-        case 0: // Low quality
-        default:
-            suffix = "";
-            break;
+std::string getButtonSpriteName(bool isOldStyle) {
+    return isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr;
+}
+
+void repositionButtonsInColumn(CCMenu* menu, float topY, float bottomY) {
+    if (!menu) return;
+
+    auto children = menu->getChildren();
+    if (!children || children->count() == 0) return;
+
+    std::vector<CCMenuItem*> buttons;
+    for (unsigned int i = 0; i < children->count(); ++i) {
+        if (auto item = dynamic_cast<CCMenuItem*>(children->objectAtIndex(i))) {
+            buttons.push_back(item);
+        }
     }
-    std::string spriteName = "noxygalaxy.bring_back_16/" + base + suffix + ".png";
-    log::info("Attempting to load sprite: {}", spriteName);
-    return spriteName;
+
+    if (buttons.empty()) return;
+
+    int buttonCount = buttons.size();
+    float totalHeight = topY - bottomY + 25.0;
+    float spacing = totalHeight / (buttonCount - 1.25);
+
+    for (int i = 0; i < buttonCount; ++i) {
+        auto button = buttons[i];
+        float newY = topY - i * spacing;
+        button->setPositionY(newY);
+        if (i == 0) {
+            float commonX = button->getPositionX();
+            for (int j = 1; j < buttonCount; ++j) {
+                buttons[j]->setPositionX(commonX);
+            }
+        }
+    }
 }
 
 // LevelInfoLayer modification
 class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
     struct Fields {
         bool isOldStyle = false;
-        CCMenu* toggleMenu = nullptr;
-        CCMenuItemSpriteExtra* toggleButton = nullptr;
+        CCMenuItemToggler* toggleButton = nullptr;
         std::unordered_map<std::string, OriginalState> originalStates;
     };
 
@@ -66,63 +80,169 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
     void applyOldStyle() {
         bool hideCustomSongs = Mod::get()->getSettingValue<bool>("hide-custom-songs");
 
-        if (hideCustomSongs) {
-            if (auto widget = getChildByID("custom-songs-widget")) widget->setVisible(false);
-        }
-
         if (auto widget = getChildByID("custom-songs-widget")) {
+            if (hideCustomSongs) widget->setVisible(false);
             widget->setScale(0.55);
             widget->setPosition(419.5, 187.0);
         }
-        if (auto bar = getChildByID("practice-mode-bar")) {
-            bar->setPosition(284.5, 22.0);
-            bar->setScale(1.0);
-            getChildByID("normal-mode-bar")->setPosition(284.5, 75.0);
-            getChildByID("normal-mode-bar")->setScale(1.0);
+
+        if (auto practiceBar = getChildByID("practice-mode-bar")) {
+            if (auto normalBar = getChildByID("normal-mode-bar")) {
+                practiceBar->setPosition(284.5, 22.0);
+                practiceBar->setScale(1.0);
+                normalBar->setPosition(284.5, 75.0);
+                normalBar->setScale(1.0);
+            }
         }
-        if (auto percentage = getChildByID("practice-mode-percentage")) {
-            percentage->setPosition(284.5, 22.0);
-            percentage->setScale(0.55);
-            getChildByID("normal-mode-percentage")->setPosition(284.5, 75.0);
-            getChildByID("normal-mode-percentage")->setScale(0.55);
+
+        if (auto practicePercent = getChildByID("practice-mode-percentage")) {
+            if (auto normalPercent = getChildByID("normal-mode-percentage")) {
+                practicePercent->setPosition(284.5, 22.0);
+                practicePercent->setScale(0.55);
+                normalPercent->setPosition(284.5, 75.0);
+                normalPercent->setScale(0.55);
+            }
         }
-        if (auto label = getChildByID("practice-mode-label")) {
-            label->setPosition(284.5, 42.0);
-            label->setScale(0.6);
-            getChildByID("normal-mode-label")->setPosition(284.5, 95.0);
-            getChildByID("normal-mode-label")->setScale(0.6);
+
+        if (auto practiceLabel = getChildByID("practice-mode-label")) {
+            if (auto normalLabel = getChildByID("normal-mode-label")) {
+                practiceLabel->setPosition(284.5, 42.0);
+                practiceLabel->setScale(0.6);
+                normalLabel->setPosition(284.5, 95.0);
+                normalLabel->setScale(0.6);
+            }
         }
-        if (auto coin = getChildByID("coin-icon-1")) {
-            coin->setPositionY(168.0);
-            getChildByID("coin-icon-2")->setPositionY(168.0);
-            getChildByID("coin-icon-3")->setPositionY(168.0);
-            getChildByID("difficulty-sprite")->setPositionY(198.0);
-        } else {
-            getChildByID("difficulty-sprite")->setPositionY(191.0);
+
+        CCNode* coin1 = getChildByID("coin-icon-1");
+        CCNode* coin2 = getChildByID("coin-icon-2");
+        CCNode* coin3 = getChildByID("coin-icon-3");
+        CCNode* difficulty = getChildByID("difficulty-sprite");
+        CCNode* moreDifficulties = getChildByID("uproxide.more_difficulties/more-difficulties-spr");
+        if (coin1 && coin2 && coin3 && difficulty) {
+            coin1->setPositionY(161.0);
+            coin2->setPositionY(161.0);
+            coin3->setPositionY(161.0);
+            difficulty->setPositionY(171.0);
         }
-        if (auto icon = getChildByID("length-icon")) {
-            icon->setPosition(155.5, 126.0);
-            getChildByID("downloads-icon")->setPosition(262.5, 126.0);
-            getChildByID("likes-icon")->setPosition(361.5, 126.0);
-            getChildByID("orbs-icon")->setVisible(false);
+        if (coin1 && difficulty) {
+            coin1->setPositionY(161.0);
+            difficulty->setPositionY(171.0);
         }
-        if (auto label = getChildByID("length-label")) {
-            label->setPosition(185.5, 125.0);
-            label->setScale(0.6);
-            getChildByID("exact-length-label")->setPosition(185.5, 115.0);
-            getChildByID("exact-length-label")->setVisible(false);
-            getChildByID("downloads-label")->setPosition(292.5, 125.0);
-            getChildByID("downloads-label")->setScale(0.6);
-            getChildByID("likes-label")->setPosition(391.5, 126.0);
-            getChildByID("likes-label")->setScale(0.6);
-            getChildByID("orbs-label")->setVisible(false);
+        if (coin1 && coin2 && difficulty) {
+            coin1->setPositionY(161.0);
+            coin2->setPositionY(161.0);
+            difficulty->setPositionY(171.0);
+        } else if (difficulty) {
+            difficulty->setPositionY(171.0);
         }
-        if (auto menu = getChildByID("play-menu")) menu->setPositionY(138.0);
-        if (auto label = getChildByID("title-label")) {
-            label->setPositionY(288.0);
-            label->setScale(1.15);
-            getChildByID("creator-info-menu")->setPositionY(256.2);
-            getChildByID("creator-info-menu")->setScale(1.1);
+
+        if (coin1 && coin2 && coin3 && moreDifficulties) {
+            coin1->setPositionY(161.0);
+            coin2->setPositionY(161.0);
+            coin3->setPositionY(161.0);
+            moreDifficulties->setPositionY(204.5);
+        }
+        if (coin1 && moreDifficulties) {
+            coin1->setPositionY(161.0);
+            moreDifficulties->setPositionY(204.5);
+        }
+        if (coin1 && coin2 && moreDifficulties) {
+            coin1->setPositionY(161.0);
+            coin2->setPositionY(161.0);
+            moreDifficulties->setPositionY(204.5);
+        } else if (moreDifficulties) {
+            moreDifficulties->setPositionY(171.0);
+        }
+
+        if (auto lengthIcon = getChildByID("length-icon")) {
+            if (auto downloadsIcon = getChildByID("downloads-icon")) {
+                if (auto likesIcon = getChildByID("likes-icon")) {
+                    if (auto orbsIcon = getChildByID("orbs-icon")) {
+                        lengthIcon->setPosition(155.5, 126.0);
+                        downloadsIcon->setPosition(262.5, 126.0);
+                        likesIcon->setPosition(361.5, 126.0);
+                        orbsIcon->setVisible(false);
+                    }
+                }
+            }
+        }
+
+        if (auto lengthLabel = getChildByID("length-label")) {
+            if (auto exactLengthLabel = getChildByID("exact-length-label")) {
+                if (auto downloadsLabel = getChildByID("downloads-label")) {
+                    if (auto likesLabel = getChildByID("likes-label")) {
+                        if (auto orbsLabel = getChildByID("orbs-label")) {
+                            lengthLabel->setPosition(185.5, 125.0);
+                            lengthLabel->setScale(0.6);
+                            exactLengthLabel->setPosition(185.5, 115.0);
+                            exactLengthLabel->setVisible(false);
+                            downloadsLabel->setPosition(292.5, 125.0);
+                            downloadsLabel->setScale(0.6);
+                            likesLabel->setPosition(391.5, 126.0);
+                            likesLabel->setScale(0.6);
+                            orbsLabel->setVisible(false);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (auto playMenu = getChildByID("play-menu")) playMenu->setPositionY(138.0);
+
+        if (auto titleLabel = getChildByID("title-label")) {
+            if (auto creatorMenu = getChildByID("creator-info-menu")) {
+                titleLabel->setPositionY(288.0);
+                titleLabel->setScale(1.15);
+                creatorMenu->setPositionY(250.2);
+                creatorMenu->setScale(1.1);
+            }
+        }
+
+        if (auto copyIndicator = getChildByID("copy-indicator")) {
+            copyIndicator->setPositionY(258.0);
+        }
+
+        if (auto highObjectIndicator = getChildByID("high-object-indicator")) {
+            highObjectIndicator->setPositionY(258.0);
+        }
+
+        CCNode* starsLabel = getChildByID("stars-label");
+        CCNode* starsIcon = getChildByID("stars-icon");
+        if (starsLabel && starsIcon) {
+            starsLabel->setPositionY(172.0);
+            starsIcon->setPositionY(172.0);
+            if (difficulty) difficulty->setPositionY(211.0);
+            if (moreDifficulties) moreDifficulties->setPositionY(211.0);
+        }
+        if (coin1 && coin2 && coin3 && starsLabel && starsIcon) {
+            coin1->setPositionY(156.5);
+            coin2->setPositionY(156.5);
+            coin3->setPositionY(156.5);
+            starsLabel->setPositionY(172.0);
+            starsIcon->setPositionY(172.0);
+            if (difficulty) difficulty->setPositionY(205.0);
+            if (moreDifficulties) moreDifficulties->setPositionY(205.0);
+        }
+        if (coin1 && starsLabel && starsIcon) {
+            coin1->setPositionY(156.5);
+            starsLabel->setPositionY(172.0);
+            starsIcon->setPositionY(172.0);
+            if (difficulty) difficulty->setPositionY(205.0);
+            if (moreDifficulties) moreDifficulties->setPositionY(205.0);
+        }
+        if (coin1 && coin2 && starsLabel && starsIcon) {
+            coin1->setPositionY(156.5);
+            coin2->setPositionY(156.5);
+            starsLabel->setPositionY(172.0);
+            starsIcon->setPositionY(172.0);
+            if (difficulty) difficulty->setPositionY(205.0);
+            if (moreDifficulties) moreDifficulties->setPositionY(205.0);
+        }
+
+        CCNode* bestTimeLabel = getChildByID("best-time-label");
+        if (bestTimeLabel) {
+            bestTimeLabel->setPositionY(100.0);
+            bestTimeLabel->setScale(0.85);
         }
     }
 
@@ -137,74 +257,64 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
         }
     }
 
-    void updateButtonSprite() {
-        if (m_fields->toggleButton) {
-            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
-                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
-            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
-            auto newSprite = CCSprite::create(spriteName.c_str());
-            if (!newSprite) {
-                log::error("Failed to load sprite: {}", spriteName);
-                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
-                newSprite = CCSprite::create(spriteName.c_str());
-            }
-            if (newSprite) {
-                m_fields->toggleButton->setNormalImage(newSprite);
-            } else {
-                log::error("Failed to load fallback sprite: {}", spriteName);
-            }
-        }
-    }
-
-    void onToggle(CCObject* sender) {
-        m_fields->isOldStyle = !m_fields->isOldStyle;
-        Mod::get()->setSavedValue("old_style_enabled", m_fields->isOldStyle);
-        m_fields->isOldStyle ? applyOldStyle() : restoreOriginalStyle();
-        updateButtonSprite();
-    }
-
     bool init(GJGameLevel* level, bool p1) {
         if (!LevelInfoLayer::init(level, p1)) return false;
-
+    
         bool shouldModify = Mod::get()->getSettingValue<bool>("change-levelinfolayer");
         const std::vector<std::string> ids = {
             "custom-songs-widget", "practice-mode-bar", "normal-mode-bar", "practice-mode-percentage",
             "normal-mode-percentage", "practice-mode-label", "normal-mode-label", "coin-icon-1",
             "coin-icon-2", "coin-icon-3", "difficulty-sprite", "length-icon", "downloads-icon",
             "likes-icon", "orbs-icon", "length-label", "exact-length-label", "downloads-label",
-            "likes-label", "orbs-label", "play-menu", "title-label", "creator-info-menu"
+            "likes-label", "orbs-label", "play-menu", "title-label", "creator-info-menu",
+            "copy-indicator", "high-object-indicator", "stars-label", "stars-icon",
+            "uproxide.more_difficulties/more-difficulties-spr", "best-time-label"
         };
-
+    
         for (const auto& id : ids) storeOriginalState(getChildByID(id), id);
-
+    
         if (shouldModify) {
             m_fields->isOldStyle = Mod::get()->getSavedValue<bool>("old_style_enabled", false);
+    
+            auto node = getChildByID("right-side-menu");
+            if (!node || !dynamic_cast<CCMenu*>(node)) return true;
+            auto menu = static_cast<CCMenu*>(node);
+    
+            auto offSprite = CCSprite::create("bringback16-btn.png"_spr);
+            auto onSprite = CCSprite::create("bringback22-btn.png"_spr);
+    
+            if (!offSprite || !onSprite) {
+                log::error("Failed to create toggle sprites: offSprite={}, onSprite={}", 
+                           offSprite ? "loaded" : "null", onSprite ? "loaded" : "null");
+                return true;
+            }
+    
+            m_fields->toggleButton = CCMenuItemToggler::create(
+                offSprite,
+                onSprite,
+                this,
+                menu_selector(OldStyleLevelInfoLayer::onToggle)
+            );
+            m_fields->toggleButton->setID("bringback-btn");
+    
+            m_fields->toggleButton->toggle(m_fields->isOldStyle);
+    
+            menu->addChild(m_fields->toggleButton);
+            repositionButtonsInColumn(menu, 300.0f, 50.0f);
+    
             if (m_fields->isOldStyle) applyOldStyle();
-
-            m_fields->toggleMenu = CCMenu::create();
-            m_fields->toggleMenu->setID("bringback1.6-menu");
-            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
-                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
-            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
-            auto buttonSprite = CCSprite::create(spriteName.c_str());
-            if (!buttonSprite) {
-                log::error("Failed to load initial sprite: {}", spriteName);
-                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
-                buttonSprite = CCSprite::create(spriteName.c_str());
-            }
-            if (buttonSprite) {
-                m_fields->toggleButton = CCMenuItemSpriteExtra::create(buttonSprite, this, menu_selector(OldStyleLevelInfoLayer::onToggle));
-                m_fields->toggleButton->setID("bringback-btn");
-                m_fields->toggleMenu->addChild(m_fields->toggleButton);
-                m_fields->toggleMenu->setPosition(422.0, 295.0);
-                addChild(m_fields->toggleMenu);
-            } else {
-                log::error("Failed to create toggle button with sprite: {}", spriteName);
-            }
+        }
+        return true;
+    }
+    
+    void onToggle(CCObject* sender) {
+        m_fields->isOldStyle = !m_fields->isOldStyle;
+        Mod::get()->setSavedValue("old_style_enabled", m_fields->isOldStyle);
+        if (m_fields->isOldStyle) {
+            applyOldStyle();
         } else {
             restoreOriginalStyle();
         }
-        return true;
     }
 };
 
@@ -212,8 +322,7 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
 class $modify(OldStyleCreatorLayer, CreatorLayer) {
     struct Fields {
         bool isOldStyle = false;
-        CCMenu* toggleMenu = nullptr;
-        CCMenuItemSpriteExtra* toggleButton = nullptr;
+        CCMenuItemToggler* toggleButton = nullptr;
         std::unordered_map<std::string, OriginalState> originalStates;
         bool statesStored = false;
     };
@@ -269,55 +378,51 @@ class $modify(OldStyleCreatorLayer, CreatorLayer) {
         }
     }
 
-    void updateButtonSprite() {
-        if (m_fields->toggleButton) {
-            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
-                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
-            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
-            auto newSprite = CCSprite::create(spriteName.c_str());
-            if (!newSprite) {
-                log::error("Failed to load sprite: {}", spriteName);
-                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
-                newSprite = CCSprite::create(spriteName.c_str());
-            }
-            if (newSprite) m_fields->toggleButton->setNormalImage(newSprite);
-        }
-    }
-
-    void onToggle(CCObject* sender) {
-        m_fields->isOldStyle = !m_fields->isOldStyle;
-        Mod::get()->setSavedValue("old_style_in_creatorlayer", m_fields->isOldStyle);
-        m_fields->isOldStyle ? applyOldStyle() : restoreOriginalStyle();
-        updateButtonSprite();
-    }
-
     bool init() {
         if (!CreatorLayer::init()) return false;
         bool shouldModify = Mod::get()->getSettingValue<bool>("change-creatorlayer");
 
         if (shouldModify) {
             m_fields->isOldStyle = Mod::get()->getSavedValue<bool>("old_style_in_creatorlayer", false);
-            m_fields->toggleMenu = CCMenu::create();
-            m_fields->toggleMenu->setID("bringback1.6-menu");
-            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
-                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
-            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
-            auto buttonSprite = CCSprite::create(spriteName.c_str());
-            if (!buttonSprite) {
-                log::error("Failed to load initial sprite: {}", spriteName);
-                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
-                buttonSprite = CCSprite::create(spriteName.c_str());
+
+            auto menu = getChildByID("top-right-menu");
+            if (!menu || !menu->getChildByID("vault-button")) return true;
+            auto referenceBtn = menu->getChildByID("vault-button");
+
+            auto offSprite = CCSprite::create("bringback16-btn.png"_spr);
+            auto onSprite = CCSprite::create("bringback22-btn.png"_spr);
+
+            if (!offSprite || !onSprite) {
+                log::error("Failed to create toggle sprites: offSprite={}, onSprite={}", 
+                           offSprite ? "loaded" : "null", onSprite ? "loaded" : "null");
+                return true;
             }
-            if (buttonSprite) {
-                m_fields->toggleButton = CCMenuItemSpriteExtra::create(buttonSprite, this, menu_selector(OldStyleCreatorLayer::onToggle));
-                m_fields->toggleButton->setID("bringback-btn");
-                m_fields->toggleMenu->addChild(m_fields->toggleButton);
-                m_fields->toggleMenu->setPosition(422.0, 295.0);
-                addChild(m_fields->toggleMenu);
-            }
+
+            m_fields->toggleButton = CCMenuItemToggler::create(
+                offSprite,
+                onSprite,
+                this,
+                menu_selector(OldStyleCreatorLayer::onToggle)
+            );
+            m_fields->toggleButton->setID("bringback-btn");
+            m_fields->toggleButton->toggle(m_fields->isOldStyle);
+            m_fields->toggleButton->setPosition(referenceBtn->getPosition() - CCPoint{50.f, 0.f});
+            menu->addChild(m_fields->toggleButton);
+
+            if (m_fields->isOldStyle) applyOldStyle();
         }
         this->scheduleOnce(schedule_selector(OldStyleCreatorLayer::onDelayedInit), 0.01f);
         return true;
+    }
+
+    void onToggle(CCObject* sender) {
+        m_fields->isOldStyle = !m_fields->isOldStyle;
+        Mod::get()->setSavedValue("old_style_in_creatorlayer", m_fields->isOldStyle);
+        if (m_fields->isOldStyle) {
+            applyOldStyle();
+        } else {
+            restoreOriginalStyle();
+        }
     }
 
     void onDelayedInit(float dt) {
@@ -332,8 +437,7 @@ class $modify(OldStyleCreatorLayer, CreatorLayer) {
 class $modify(OldStyleEditorPauseLayer, EditorPauseLayer) {
     struct Fields {
         bool isOldStyle = false;
-        CCMenu* toggleMenu = nullptr;
-        CCMenuItemSpriteExtra* toggleButton = nullptr;
+        CCMenuItemToggler* toggleButton = nullptr;
         std::unordered_map<std::string, OriginalState> originalStates;
         bool statesStored = false;
     };
@@ -344,29 +448,44 @@ class $modify(OldStyleEditorPauseLayer, EditorPauseLayer) {
 
         if (shouldModify) {
             m_fields->isOldStyle = Mod::get()->getSavedValue<bool>("old_style_in_editorpause", false);
-            m_fields->toggleMenu = CCMenu::create();
-            m_fields->toggleMenu->setID("bringback1.6-menu");
-            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
-                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
-            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
-            auto buttonSprite = CCSprite::create(spriteName.c_str());
-            if (!buttonSprite) {
-                log::error("Failed to load initial sprite: {}", spriteName);
-                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
-                buttonSprite = CCSprite::create(spriteName.c_str());
+
+            auto menu = getChildByID("guidelines-menu");
+            if (!menu || !menu->getChildByID("guidelines-enable-toggle")) return true;
+            auto referenceBtn = menu->getChildByID("guidelines-enable-toggle");
+
+            auto offSprite = CCSprite::create("bringback16-btn.png"_spr);
+            auto onSprite = CCSprite::create("bringback22-btn.png"_spr);
+
+            if (!offSprite || !onSprite) {
+                log::error("Failed to create toggle sprites: offSprite={}, onSprite={}", 
+                           offSprite ? "loaded" : "null", onSprite ? "loaded" : "null");
+                return true;
             }
-            if (buttonSprite) {
-                m_fields->toggleButton = CCMenuItemSpriteExtra::create(buttonSprite, this, menu_selector(OldStyleEditorPauseLayer::onToggle));
-                m_fields->toggleButton->setID("bringback-btn");
-                m_fields->toggleButton->setPositionX(-100.0);
-                m_fields->toggleMenu->addChild(m_fields->toggleButton);
-                auto winSize = CCDirector::sharedDirector()->getWinSize();
-                m_fields->toggleMenu->setPosition(winSize.width - 50.0f, winSize.height - 25.0f);
-                addChild(m_fields->toggleMenu, 100);
-            }
+
+            m_fields->toggleButton = CCMenuItemToggler::create(
+                offSprite,
+                onSprite,
+                this,
+                menu_selector(OldStyleEditorPauseLayer::onToggle)
+            );
+            m_fields->toggleButton->setID("bringback-btn");
+            m_fields->toggleButton->toggle(m_fields->isOldStyle);
+            m_fields->toggleButton->setPosition(referenceBtn->getPosition() + CCPoint{50.f, 0.f});
+            menu->addChild(m_fields->toggleButton);
+
             if (m_fields->isOldStyle) applyOldStyle();
         }
         return true;
+    }
+
+    void onToggle(CCObject* sender) {
+        m_fields->isOldStyle = !m_fields->isOldStyle;
+        Mod::get()->setSavedValue("old_style_in_editorpause", m_fields->isOldStyle);
+        if (m_fields->isOldStyle) {
+            applyOldStyle();
+        } else {
+            restoreOriginalStyle();
+        }
     }
 
     void storeOriginalState(CCNode* node, const std::string& id) {
@@ -404,28 +523,5 @@ class $modify(OldStyleEditorPauseLayer, EditorPauseLayer) {
                 }
             }
         }
-    }
-
-    void updateButtonSprite() {
-        if (m_fields->toggleButton) {
-            int quality = GameManager::sharedState()->getGameVariable("0033") ? 2 :
-                         GameManager::sharedState()->getGameVariable("0032") ? 1 : 0;
-            log::info("Quality level detected: {}", quality);
-            std::string spriteName = getButtonSpriteName(m_fields->isOldStyle, quality);
-            auto newSprite = CCSprite::create(spriteName.c_str());
-            if (!newSprite) {
-                log::error("Failed to load sprite: {}", spriteName);
-                spriteName = m_fields->isOldStyle ? "noxygalaxy.bring_back_16/bringback22-btn.png" : "noxygalaxy.bring_back_16/bringback16-btn.png";
-                newSprite = CCSprite::create(spriteName.c_str());
-            }
-            if (newSprite) m_fields->toggleButton->setNormalImage(newSprite);
-        }
-    }
-
-    void onToggle(CCObject* sender) {
-        m_fields->isOldStyle = !m_fields->isOldStyle;
-        Mod::get()->setSavedValue("old_style_in_editorpause", m_fields->isOldStyle);
-        m_fields->isOldStyle ? applyOldStyle() : restoreOriginalStyle();
-        updateButtonSprite();
     }
 };

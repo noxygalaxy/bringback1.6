@@ -1,3 +1,11 @@
+# 1.4.4
+
+- Fixed crashes when changing styles on LevelInfoLayer
+- Best Time Label is can be seen properly now
+- Changed button positions in every layer
+- Changed some offseted objects in LevelInfoLayer
+- Mod is now working properly with More Difficulties by Uproxide
+
 # 1.4.3
 
 - Fixed 1.6 / 2.2 button for Low / Medium quality
