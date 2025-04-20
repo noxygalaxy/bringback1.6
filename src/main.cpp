@@ -371,7 +371,6 @@ class $modify(OldStyleCreatorLayer, CreatorLayer) {
             );
             m_fields->toggleButton->setID("bringback-btn");
             m_fields->toggleButton->toggle(m_fields->isOldStyle);
-            m_fields->toggleButton->setPosition(referenceBtn->getPosition() - CCPoint{50.f, 0.f});
             menu->addChild(m_fields->toggleButton);
             menu->updateLayout();
 
@@ -436,7 +435,6 @@ class $modify(OldStyleEditorPauseLayer, EditorPauseLayer) {
             );
             m_fields->toggleButton->setID("bringback-btn");
             m_fields->toggleButton->toggle(m_fields->isOldStyle);
-            m_fields->toggleButton->setPosition(referenceBtn->getPosition() + CCPoint{50.f, 0.f});
             menu->addChild(m_fields->toggleButton);
             menu->updateLayout();
 
