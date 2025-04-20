@@ -262,7 +262,7 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
                 this,
                 menu_selector(OldStyleLevelInfoLayer::onToggle)
             );
-            m_fields->toggleButton->setID("bringback-btn");
+            m_fields->toggleButton->setID("bringback-btn"_spr);
             m_fields->toggleButton->toggle(m_fields->isOldStyle);
             menu->addChild(m_fields->toggleButton);
             menu->updateLayout();
@@ -369,7 +369,7 @@ class $modify(OldStyleCreatorLayer, CreatorLayer) {
                 this,
                 menu_selector(OldStyleCreatorLayer::onToggle)
             );
-            m_fields->toggleButton->setID("bringback-btn");
+            m_fields->toggleButton->setID("bringback-btn"_spr);
             m_fields->toggleButton->toggle(m_fields->isOldStyle);
             menu->addChild(m_fields->toggleButton);
             menu->updateLayout();
@@ -433,7 +433,7 @@ class $modify(OldStyleEditorPauseLayer, EditorPauseLayer) {
                 this,
                 menu_selector(OldStyleEditorPauseLayer::onToggle)
             );
-            m_fields->toggleButton->setID("bringback-btn");
+            m_fields->toggleButton->setID("bringback-btn"_spr);
             m_fields->toggleButton->toggle(m_fields->isOldStyle);
             menu->addChild(m_fields->toggleButton);
             menu->updateLayout();
