@@ -1,4 +1,3 @@
-#include <Geode/Geode.hpp>
 #include <Geode/modify/LevelInfoLayer.hpp>
 #include <Geode/modify/CreatorLayer.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
@@ -29,38 +28,6 @@ struct OriginalState {
 
 std::string getButtonSpriteName(bool isOldStyle) {
     return isOldStyle ? "bringback22-btn.png"_spr : "bringback16-btn.png"_spr;
-}
-
-void repositionButtonsInColumn(CCMenu* menu, float topY, float bottomY) {
-    if (!menu) return;
-
-    auto children = menu->getChildren();
-    if (!children || children->count() == 0) return;
-
-    std::vector<CCMenuItem*> buttons;
-    for (unsigned int i = 0; i < children->count(); ++i) {
-        if (auto item = dynamic_cast<CCMenuItem*>(children->objectAtIndex(i))) {
-            buttons.push_back(item);
-        }
-    }
-
-    if (buttons.empty()) return;
-
-    int buttonCount = buttons.size();
-    float totalHeight = topY - bottomY + 25.0;
-    float spacing = totalHeight / (buttonCount - 1.25);
-
-    for (int i = 0; i < buttonCount; ++i) {
-        auto button = buttons[i];
-        float newY = topY - i * spacing;
-        button->setPositionY(newY);
-        if (i == 0) {
-            float commonX = button->getPositionX();
-            for (int j = 1; j < buttonCount; ++j) {
-                buttons[j]->setPositionX(commonX);
-            }
-        }
-    }
 }
 
 // LevelInfoLayer modification
@@ -276,7 +243,7 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
         if (shouldModify) {
             m_fields->isOldStyle = Mod::get()->getSavedValue<bool>("old_style_enabled", false);
     
-            auto node = getChildByID("right-side-menu");
+            auto node = getChildByID("left-side-menu");
             if (!node || !dynamic_cast<CCMenu*>(node)) return true;
             auto menu = static_cast<CCMenu*>(node);
     
@@ -285,7 +252,7 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
     
             if (!offSprite || !onSprite) {
                 log::error("Failed to create toggle sprites: offSprite={}, onSprite={}", 
-                           offSprite ? "loaded" : "null", onSprite ? "loaded" : "null");
+                    offSprite ? "loaded" : "null", onSprite ? "loaded" : "null");
                 return true;
             }
     
@@ -300,7 +267,7 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
             m_fields->toggleButton->toggle(m_fields->isOldStyle);
     
             menu->addChild(m_fields->toggleButton);
-            repositionButtonsInColumn(menu, 300.0f, 50.0f);
+            menu->updateLayout();
     
             if (m_fields->isOldStyle) applyOldStyle();
         }
