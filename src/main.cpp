@@ -244,7 +244,7 @@ class $modify(OldStyleLevelInfoLayer, LevelInfoLayer) {
             m_fields->isOldStyle = Mod::get()->getSavedValue<bool>("old_style_enabled", false);
     
             auto node = getChildByID("left-side-menu");
-            if (!node || !dynamic_cast<CCMenu*>(node)) return true;
+            if (!node) return true;
             auto menu = static_cast<CCMenu*>(node);
     
             auto offSprite = CCSprite::create("bringback16-btn.png"_spr);

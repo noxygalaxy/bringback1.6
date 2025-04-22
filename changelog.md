@@ -1,3 +1,8 @@
+# 1.4.5
+- Fixed crash on android ( i guess so )
+- iOS and MacOS builds by @hiimjasmine00
+- A lot of code changes by @RayDeeUx
+
 # 1.4.4
 
 - Fixed crashes when changing styles on LevelInfoLayer

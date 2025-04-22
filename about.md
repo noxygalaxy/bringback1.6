@@ -68,4 +68,5 @@ If you encounter any issues, please report them on the [Issues](https://github.c
 ## Credits
 
 - **Developer**: [noxygalaxy](https://github.com/noxygalaxy)
+- **Contributors**: [@hiimjasmine00](https://github.com/hiimjasmine00) / [@RayDeeUx](https://github.com/RayDeeUx) thanks a lot for your help with the code! <3
 - **Inspiration**: Nostalgia for Geometry Dash 1.6.
